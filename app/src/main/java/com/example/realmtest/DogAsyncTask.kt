@@ -9,11 +9,9 @@ import java.lang.ref.WeakReference
 
 class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
     var realm: Realm? = null
-    var contextRef: WeakReference<Context>? = null
 
-    constructor(realm: Realm?, context: Context) : this() {
+    constructor(realm: Realm?) : this() {
         this.realm = realm
-        this.contextRef = WeakReference(context)
     }
 
     // 동작안함
@@ -45,24 +43,22 @@ class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
     // 새로 생성했지만 looper가 없음
     fun asyncWithLocalInstance(param: Dog?) {
         // 여기서 새로 만들어야 함
-        contextRef?.get()?.let {
-            Log.e("JUNGSOO", "realm init with context in doInBackground")
-            val realm = Realm.getDefaultInstance()
+        Log.e("JUNGSOO", "realm init with context in doInBackground")
+        val realm = Realm.getDefaultInstance()
 
-            // 이것도 역시 IllegalStateException 발생
-            // AsyncTask는 Looper가 없으므로 발생함
-            //java.lang.IllegalStateException: Callback cannot be delivered on current thread. Realm cannot be automatically updated on a thread without a looper.
-            realm.executeTransactionAsync(Realm.Transaction { realm ->
-                realm.copyToRealm(param)
-            },
-            Realm.Transaction.OnSuccess {
-                realm.close()
-            },
-            Realm.Transaction.OnError {
-                Log.e("JUNGSOO", it.localizedMessage)
-                realm.close()
-            })
-        }
+        // 이것도 역시 IllegalStateException 발생
+        // AsyncTask는 Looper가 없으므로 발생함
+        //java.lang.IllegalStateException: Callback cannot be delivered on current thread. Realm cannot be automatically updated on a thread without a looper.
+        realm.executeTransactionAsync(Realm.Transaction { realm ->
+            realm.copyToRealm(param)
+        },
+        Realm.Transaction.OnSuccess {
+            realm.close()
+        },
+        Realm.Transaction.OnError {
+            Log.e("JUNGSOO", it.localizedMessage)
+            realm.close()
+        })
     }
 
     override fun doInBackground(vararg params: Dog?): Void? {

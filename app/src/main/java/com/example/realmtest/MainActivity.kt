@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         Realm.init(this)
         realm = Realm.getDefaultInstance()
 
-        val task = DogAsyncTask(realm, this)
+        val task = DogAsyncTask(realm)
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dog)
     }
 }
