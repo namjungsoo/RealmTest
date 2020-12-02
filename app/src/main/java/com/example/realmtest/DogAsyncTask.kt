@@ -1,11 +1,8 @@
 package com.example.realmtest
 
-import android.content.Context
 import android.os.AsyncTask
-import android.os.Looper
 import android.util.Log
 import io.realm.Realm
-import java.lang.ref.WeakReference
 
 class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
     var realm: Realm? = null
@@ -20,7 +17,7 @@ class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
         // UI 쓰레드에서 받은 realm을 다른 쓰레드에서 사용하면 안됨 IllegalStateException
         this.realm?.executeTransactionAsync(Realm.Transaction { realm ->
             realm.copyToRealm(param)
-            },
+        },
             Realm.Transaction.OnSuccess {
             },
             Realm.Transaction.OnError {
@@ -52,13 +49,13 @@ class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
         realm.executeTransactionAsync(Realm.Transaction { realm ->
             realm.copyToRealm(param)
         },
-        Realm.Transaction.OnSuccess {
-            realm.close()
-        },
-        Realm.Transaction.OnError {
-            Log.e("JUNGSOO", it.localizedMessage)
-            realm.close()
-        })
+            Realm.Transaction.OnSuccess {
+                realm.close()
+            },
+            Realm.Transaction.OnError {
+                Log.e("JUNGSOO", it.localizedMessage)
+                realm.close()
+            })
     }
 
     override fun doInBackground(vararg params: Dog?): Void? {
