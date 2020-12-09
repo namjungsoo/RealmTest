@@ -25,17 +25,6 @@ class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
             })
     }
 
-    // 정상동작
-    // instance 생성한 쓰레드에서 execute
-    fun syncWithLocalInstance(param: Dog?) {
-        val localRealm = Realm.getDefaultInstance()
-        localRealm.executeTransaction {
-            it.copyToRealm(param)
-            //it.close() // 여기서 닫으면 crash
-        }
-        localRealm.close() // 정상적으로 닫힌다
-    }
-
     // 동작안함
     // 새로 생성했지만 looper가 없음
     fun asyncWithLocalInstance(param: Dog?) {
@@ -58,6 +47,17 @@ class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
             })
     }
 
+    // 정상동작
+    // instance 생성한 쓰레드에서 execute
+    fun syncWithLocalInstance(param: Dog?) {
+        val localRealm = Realm.getDefaultInstance()
+        localRealm.executeTransaction {
+            it.copyToRealm(param)
+            //it.close() // 여기서 닫으면 crash
+        }
+        localRealm.close() // 정상적으로 닫힌다
+    }
+
     override fun doInBackground(vararg params: Dog?): Void? {
         val param = params[0]
 //        asyncWithLocalInstance(param)
@@ -65,6 +65,4 @@ class DogAsyncTask() : AsyncTask<Dog, Void, Void>() {
         syncWithLocalInstance(param)
         return null
     }
-
-
 }
